@@ -1,6 +1,6 @@
 import React, { useEffect, useRef } from "react";
 import "./../App.css";
-export default AddProductForm = ({
+export const AddProductForm = ({
   formAddProductActive,
   setFormAddProductActive,
   listMaterial,

@@ -1,7 +1,7 @@
 import { useRef, useState } from "react";
 
 import "./App.css";
-import AddProductForm from "./componentes/AddProductForm.jsx";
+import { AddProductForm } from "./componentes/AddProductForm.jsx";
 
 function App() {
   const inputPesoMedias = useRef();
