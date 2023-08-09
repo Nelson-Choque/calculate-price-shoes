@@ -137,13 +137,23 @@ function App() {
               </table>
             </div>
           </div>
-
-          <button
-            className="block mt-4 px-4 py-2 bg-cyan-800 text-white rounded-lg capitalize"
-            onClick={calculateCost}
-          >
-            Calcular Costo
-          </button>
+          <div className="botones flex gap-4">
+            <button
+              className="block mt-4 px-4 py-2 bg-cyan-800 text-white rounded-lg capitalize"
+              onClick={calculateCost}
+            >
+              Calcular Costo
+            </button>
+            <button
+              className="block mt-4 px-4 py-2 bg-cyan-800 text-white rounded-lg capitalize"
+              onClick={(event) => {
+                event.preventDefault();
+                setListMaterial([]);
+              }}
+            >
+              Limpiar Datos
+            </button>
+          </div>
 
           <div className="mt-4">
             <label className="font-bold" htmlFor="">
