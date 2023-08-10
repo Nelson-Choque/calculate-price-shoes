@@ -49,7 +49,8 @@ export const AddProductForm = ({
     };
   };
 
-  const cancelButton = () => {
+  const cancelButton = (event) => {
+    event.preventDefault();
     const $formProduct = formProduct.current;
 
     $formProduct.classList.remove("form-product--active");

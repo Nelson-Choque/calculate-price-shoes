@@ -67,19 +67,36 @@ function App() {
     let costo = 0;
     let cantidadDeKilos = 0;
 
+    let costoPorcentaje = 0;
+    let porcentajePeso = 0;
+
     listMaterial.forEach((e) => {
       costo += parseFloat(e.costoKilo) * parseFloat(e.cantidad);
       cantidadDeKilos += 1 * parseFloat(e.cantidad);
-      console.log({
-        costo: e.costoKilo,
-        cantidad: e.cantidad,
-        total: parseFloat(e.costoKilo) * parseFloat(e.cantidad),
-      });
+
+      costoPorcentaje += ((e.costoKilo * e.porcentajeUso) / 100) * e.cantidad;
+      (porcentajePeso +=
+        ((inputPesoMedias.current.value * e.porcentajeUso) / 100) * e.cantidad),
+        console.log({
+          costo: e.costoKilo,
+          cantidad: e.cantidad,
+          total: parseFloat(e.costoKilo) * parseFloat(e.cantidad),
+          porcentaje: e.porcentajeUso,
+          costoPorcentaje: ((e.costoKilo * e.porcentajeUso) / 100) * e.cantidad,
+          porcentajePeso:
+            ((inputPesoMedias.current.value * e.porcentajeUso) / 100) *
+            e.cantidad,
+        });
     });
 
+    console.log(costoPorcentaje);
+    console.log(porcentajePeso);
     inputCostoProduccion.current.value =
       "s/" +
-      ((costo * inputPesoMedias.current.value) / cantidadDeKilos).toFixed(2);
+      (
+        (costoPorcentaje * inputPesoMedias.current.value) /
+        porcentajePeso
+      ).toFixed(2);
   };
 
   return (
@@ -87,7 +104,7 @@ function App() {
       <h2 className="p-2 text-2xl text-center capitalize font-bold text-cyan-800">
         Calcular Costo de produccion de Medias
       </h2>
-      <form className="p-4" action="">
+      <form className=" p-4" action="">
         <div className="">
           <label className="font-bold" htmlFor="">
             Peso de la medias (kg)
@@ -112,7 +129,9 @@ function App() {
           </button>
 
           <div className="mt-4 p-2 border-cyan-700 border rounded-xl ">
-            <h2 className="font-bold text-cyan-800">Materiales</h2>
+            <h2 className="font-bold text-cyan-800 text-center text-xl">
+              Materiales
+            </h2>
             <hr className="my-2" />
             <div className="overflow-scroll">
               <table className="overflow-scroll">
@@ -149,6 +168,8 @@ function App() {
               onClick={(event) => {
                 event.preventDefault();
                 setListMaterial([]);
+                inputCostoProduccion.current.value = "";
+                inputPesoMedias.current.value = "";
               }}
             >
               Limpiar Datos
