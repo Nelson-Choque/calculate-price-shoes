@@ -63,13 +63,13 @@ export const AddProductForm = ({
     <>
       <div
         ref={formProduct}
-        className="h-screen bg-slate-100 form-product  p-4"
+        className=" h-screen bg-slate-100 form-product  p-4"
       >
         <h2 className="text-center text-2xl font-bold text-cyan-800">
           Agregar Material
         </h2>
 
-        <form action="">
+        <form className="max-w-2xl mx-auto" action="">
           <div className="">
             <label className="font-bold" htmlFor="">
               Nombre
