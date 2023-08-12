@@ -117,7 +117,7 @@ function App() {
     console.log(costo);
     console.log(cantidadDeKilos);
     console.log({ sumaPrecios });
-    inputCostoProduccion.current.value = sumaPrecios;
+    inputCostoProduccion.current.value = sumaPrecios.toFixed(2);
 
     /////
     // inputCostoProduccion.current.value =
