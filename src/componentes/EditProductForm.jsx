@@ -1,18 +1,29 @@
 /* eslint-disable react/prop-types */
-import { useEffect, useRef } from "react";
-import { v4 as uuid } from "uuid";
+import { useEffect, useRef, useState } from "react";
 import "./../App.css";
 
-export const AddProductForm = ({
+export const EditProductForm = ({
+  element,
   setFormAddProductActive,
   listMaterial,
   setListMaterial,
 }) => {
   const formProduct = useRef();
-  const inputName = useRef();
-  const inputUso = useRef();
-  const inputQuantity = useRef();
-  const inputKilo = useRef();
+
+  const [formValues, setFormValues] = useState({
+    name: element.nombre,
+    kilo: element.costoKilo,
+    uso: element.porcentajeUso,
+    quantity: element.cantidad,
+  });
+
+  const handleInputChange = (event) => {
+    const { name, value } = event.target;
+    setFormValues({
+      ...formValues,
+      [name]: value,
+    });
+  };
 
   useEffect(() => {
     const $formProduct = formProduct.current;
@@ -22,39 +33,34 @@ export const AddProductForm = ({
     }, 0);
   }, []);
 
-  const addMaterial = (event) => {
-    const { name, kilo, quantity, uso } = getMaterial();
+  const updateMaterial = (event) => {
+    const { name, kilo, quantity, uso } = formValues;
 
     if (!name || !kilo || !quantity || !uso) {
       return "";
     }
 
     event.preventDefault();
-    setListMaterial([
-      ...listMaterial,
-      {
-        id: uuid(),
-        nombre: name,
-        costoKilo: kilo,
-        porcentajeUso: uso,
-        cantidad: quantity,
-      },
-    ]);
+
+    const updatedItem = {
+      id: element.id, // Mantén el mismo ID
+      nombre: formValues.name,
+      costoKilo: formValues.kilo,
+      porcentajeUso: formValues.uso,
+      cantidad: formValues.quantity,
+    };
+
+    const updatedList = listMaterial.map((material) =>
+      material.id === element.id ? updatedItem : material
+    );
+    setListMaterial(updatedList);
+
     const $formProduct = formProduct.current;
 
     $formProduct.classList.remove("form-product--active");
     setTimeout(() => {
       setFormAddProductActive(false);
     }, 500);
-  };
-
-  const getMaterial = () => {
-    return {
-      name: inputName.current.value,
-      kilo: inputKilo.current.value,
-      quantity: inputQuantity.current.value,
-      uso: inputUso.current.value,
-    };
   };
 
   const cancelButton = (event) => {
@@ -70,10 +76,7 @@ export const AddProductForm = ({
   return (
     <>
       <div ref={formProduct} className="h-screen p-4 bg-slate-100 form-product">
-        <h2 className="text-2xl font-bold text-center text-cyan-800">
-          Agregar Material
-        </h2>
-
+        {/* Resto del código... */}
         <form className="max-w-2xl mx-auto" action="">
           <div className="">
             <label className="font-bold" htmlFor="">
@@ -82,8 +85,10 @@ export const AddProductForm = ({
             <input
               className="w-full p-2 mt-2 border rounded-lg border-cyan-700"
               type="text"
-              ref={inputName}
+              name="name"
               required
+              value={formValues.name}
+              onChange={handleInputChange}
             />
           </div>
 
@@ -92,22 +97,26 @@ export const AddProductForm = ({
               Costo por Kilo
             </label>
             <input
-              ref={inputKilo}
               className="w-full p-2 mt-2 border rounded-lg border-cyan-700"
               type="text"
+              name="kilo"
               required
+              value={formValues.kilo}
+              onChange={handleInputChange}
             />
           </div>
 
           <div className="mt-4">
             <label className="font-bold" htmlFor="">
-              porcentaje de uso(%)
+              Porcentaje de uso(%)
             </label>
             <input
-              ref={inputUso}
               className="w-full p-2 mt-2 border rounded-lg border-cyan-700"
               type="text"
+              name="uso"
               required
+              value={formValues.uso}
+              onChange={handleInputChange}
             />
           </div>
 
@@ -116,17 +125,18 @@ export const AddProductForm = ({
               Cantidad
             </label>
             <input
-              ref={inputQuantity}
               className="w-full p-2 mt-2 border rounded-lg border-cyan-700"
               type="text"
+              name="quantity"
               required
+              value={formValues.quantity}
+              onChange={handleInputChange}
             />
           </div>
-
           <div className="flex gap-4 botones">
             <button
               className="px-4 py-2 mt-4 text-white capitalize rounded-lg bg-cyan-800"
-              onClick={addMaterial}
+              onClick={updateMaterial}
             >
               Agregar
             </button>
@@ -137,6 +147,7 @@ export const AddProductForm = ({
               Cancelar
             </button>
           </div>
+          {/* ... (resto del código) */}
         </form>
       </div>
     </>

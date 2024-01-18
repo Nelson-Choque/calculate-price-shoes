@@ -2,60 +2,29 @@ import { useRef, useState } from "react";
 
 import "./App.css";
 import { AddProductForm } from "./componentes/AddProductForm.jsx";
+import { materialData } from "./data/material.js";
+import { EditProductForm } from "./componentes/EditProductForm.jsx";
 
 function App() {
   const inputPesoMedias = useRef();
   const inputCostoProduccion = useRef();
 
   const [formAddProductActive, setFormAddProductActive] = useState(false);
-  const [listMaterial, setListMaterial] = useState([
-    {
-      nombre: "algodon",
-      costoKilo: "18",
-      porcentajeUso: "60",
-      cantidad: "1",
-    },
-    {
-      nombre: "Elastico",
-      costoKilo: "24",
-      porcentajeUso: "40",
-      cantidad: "1",
-    },
-    {
-      nombre: "nylon verde",
-      costoKilo: "38",
-      porcentajeUso: "30",
-      cantidad: "2",
-    },
-    {
-      nombre: "nylon blanco",
-      costoKilo: "38",
-      porcentajeUso: "20",
-      cantidad: "2",
-    },
-    {
-      nombre: "Lycra",
-      costoKilo: "28",
-      porcentajeUso: "60",
-      cantidad: "1",
-    },
-    {
-      nombre: "Sport",
-      costoKilo: "11",
-      porcentajeUso: "60",
-      cantidad: "1",
-    },
-    {
-      nombre: "Polyester",
-      costoKilo: "18",
-      porcentajeUso: "40",
-      cantidad: "2",
-    },
-  ]);
+  //*edit product
+
+  const [formEditProductActive, setEditProductActive] = useState(false);
+  const [selectedElement, setSelectedElement] = useState(null);
+
+  const [listMaterial, setListMaterial] = useState(materialData);
 
   const showFormAddProduct = (event) => {
     event.preventDefault();
     setFormAddProductActive(true);
+  };
+  const showFormEditProduct = (event, material) => {
+    event.preventDefault();
+    setSelectedElement(material);
+    setEditProductActive(true);
   };
 
   const calculateCost = (event) => {
@@ -64,20 +33,22 @@ function App() {
     }
 
     event.preventDefault();
-    let costo = 0;
-    let cantidadDeKilos = 0;
 
-    let costoPorcentaje = 0;
-    let porcentajePeso = 0;
+    //* iniital counter values
+
     let sumaPrecios = 0;
-    console.log("peso medias: " + inputPesoMedias.current.value);
+
+    //* Calculate total percentage of sock
 
     const totalPorcentajes = listMaterial.reduce(
       (acumulador, e) => acumulador + parseInt(e.porcentajeUso) * e.cantidad,
       0
     );
 
+    //* loop through array items
+
     listMaterial.forEach((e) => {
+      //* calculate percentage of sock
       const porcentajeReal = (
         ((parseFloat(e.porcentajeUso) *
           parseFloat(inputPesoMedias.current.value)) /
@@ -85,59 +56,43 @@ function App() {
         e.cantidad
       ).toFixed(2);
 
+      //* calculate material cost
+
       const precioReal = (porcentajeReal * parseInt(e.costoKilo)).toFixed(2);
 
+      //* increase the total price
+
       sumaPrecios += parseFloat(precioReal);
-
-      console.log({ precioReal });
-
-      console.log({ sumaPrecios });
-
-      console.log("result" + porcentajeReal);
-      costo += parseFloat(e.costoKilo) * parseFloat(e.cantidad);
-      cantidadDeKilos += 1 * parseFloat(e.cantidad);
-      costoPorcentaje += ((e.costoKilo * e.porcentajeUso) / 100) * e.cantidad;
-      porcentajePeso += (e.porcentajeUso / 100) * e.cantidad;
-
-      console.log("porcentaje peso:" + porcentajePeso);
-      // console.log({
-      //   costo: e.costoKilo,
-      //   cantidad: e.cantidad,
-      //   total: parseFloat(e.costoKilo) * parseFloat(e.cantidad),
-      //   porcentaje: e.porcentajeUso,
-      //   costoPorcentaje: ((e.costoKilo * e.porcentajeUso) / 100) * e.cantidad,
-      //   porcentajePeso:
-      //     ((inputPesoMedias.current.value * e.porcentajeUso) / 100) *
-      //     e.cantidad,
-      // });
     });
 
-    console.log(costoPorcentaje);
-    console.log(porcentajePeso);
-    console.log(costo);
-    console.log(cantidadDeKilos);
-    console.log({ sumaPrecios });
     inputCostoProduccion.current.value = sumaPrecios.toFixed(2);
+  };
 
-    /////
-    // inputCostoProduccion.current.value =
-    //   "s/" +
-    //   ((costo * inputPesoMedias.current.value) / cantidadDeKilos).toFixed(2);
+  const onDeleteElement = (event, material) => {
+    event.preventDefault();
+
+    console.log(material);
+
+    const updatedMaterial = listMaterial.filter(
+      (elemento) => elemento.id !== material.id
+    );
+
+    setListMaterial(updatedMaterial);
   };
 
   return (
     <>
       <div className="max-w-2xl mx-auto">
-        <h2 className="p-2 text-2xl text-center capitalize font-bold text-cyan-800">
+        <h2 className="p-2 text-2xl font-bold text-center capitalize text-cyan-800">
           Calcular Costo de produccion de Medias
         </h2>
-        <form className=" p-4" action="">
+        <form className="p-4 " action="">
           <div className="">
             <label className="font-bold" htmlFor="">
               Peso de la medias (kg)
             </label>
             <input
-              className="border-cyan-700 border rounded-lg mt-2 w-full p-2"
+              className="w-full p-2 mt-2 border rounded-lg border-cyan-700"
               type="text"
               required
               ref={inputPesoMedias}
@@ -149,14 +104,14 @@ function App() {
               Materiales de producto
             </label>
             <button
-              className="block mt-4 px-4 py-2 bg-cyan-800 text-white rounded-lg capitalize"
+              className="block px-4 py-2 mt-4 text-white capitalize rounded-lg bg-cyan-800"
               onClick={showFormAddProduct}
             >
               agregar
             </button>
 
-            <div className="mt-4 p-2 border-cyan-700 border rounded-xl ">
-              <h2 className="font-bold text-cyan-800 text-center text-xl">
+            <div className="p-2 mt-4 border border-cyan-700 rounded-xl ">
+              <h2 className="text-xl font-bold text-center text-cyan-800">
                 Materiales
               </h2>
               <hr className="my-2" />
@@ -172,26 +127,44 @@ function App() {
                   </thead>
                   <tbody className="mx-auto">
                     {listMaterial.map((persona) => (
-                      <tr key={persona.id}>
+                      <tr className="tr" key={persona.id}>
                         <td className="td">{persona.nombre}</td>
                         <td className="td">s/{persona.costoKilo}</td>
                         <td className="td">{persona.porcentajeUso}%</td>
                         <td className="td">{persona.cantidad}</td>
+                        <td className="p-2 td">
+                          <button
+                            className="block px-4 py-2 text-white bg-cyan-900 rounded-2xl"
+                            onClick={(event) => {
+                              showFormEditProduct(event, persona);
+                            }}
+                          >
+                            editar
+                          </button>
+                        </td>
+                        <td className="p-2 td">
+                          <button
+                            className="block px-4 py-2 text-white bg-cyan-900 rounded-2xl"
+                            onClick={(event) => onDeleteElement(event, persona)}
+                          >
+                            eliminar
+                          </button>
+                        </td>
                       </tr>
                     ))}
                   </tbody>
                 </table>
               </div>
             </div>
-            <div className="botones flex gap-4">
+            <div className="flex gap-4 botones">
               <button
-                className="block mt-4 px-4 py-2 bg-cyan-800 text-white rounded-lg capitalize"
+                className="block px-4 py-2 mt-4 text-white capitalize rounded-lg bg-cyan-800"
                 onClick={calculateCost}
               >
                 Calcular Costo
               </button>
               <button
-                className="block mt-4 px-4 py-2 bg-cyan-800 text-white rounded-lg capitalize"
+                className="block px-4 py-2 mt-4 text-white capitalize rounded-lg bg-cyan-800"
                 onClick={(event) => {
                   event.preventDefault();
                   setListMaterial([]);
@@ -208,7 +181,7 @@ function App() {
                 Costo de produccion de la medias
               </label>
               <input
-                className="border-cyan-700 border rounded-lg mt-2 w-full p-2"
+                className="w-full p-2 mt-2 border rounded-lg border-cyan-700"
                 type="text"
                 name=""
                 id=""
@@ -222,6 +195,15 @@ function App() {
           <AddProductForm
             formAddProductActive={formAddProductActive}
             setFormAddProductActive={setFormAddProductActive}
+            listMaterial={listMaterial}
+            setListMaterial={setListMaterial}
+          />
+        )}
+        {formEditProductActive && (
+          <EditProductForm
+            element={selectedElement}
+            formAddProductActive={formEditProductActive}
+            setFormAddProductActive={setEditProductActive}
             listMaterial={listMaterial}
             setListMaterial={setListMaterial}
           />
