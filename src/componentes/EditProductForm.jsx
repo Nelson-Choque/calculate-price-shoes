@@ -138,7 +138,7 @@ export const EditProductForm = ({
               className="px-4 py-2 mt-4 text-white capitalize rounded-lg bg-cyan-800"
               onClick={updateMaterial}
             >
-              Agregar
+              Actualizar
             </button>
             <button
               className="px-4 py-2 mt-4 text-white capitalize rounded-lg bg-cyan-800"
